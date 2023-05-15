@@ -20,7 +20,7 @@ const operationFunction = {
   "÷": (num1, num2) => num1 / num2,
 };
 let history = [];
-let answer;
+let answer = 0;
 
 // functions
 /** Parse the next match in a string, string from a certain index

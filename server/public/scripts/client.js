@@ -1,7 +1,5 @@
 console.log("In client.js");
-// globals
 
-// functions
 /** Parse calculation input and send it to the server.
  *
  * @param {Event} event
@@ -38,3 +36,5 @@ const updatePage = (calcResult) => {
   const answerElement = document.querySelector("#answer-value");
   answerElement.innerHTML = calcResult.answer;
 };
+
+getCalculationResult().then(updatePage);
