@@ -18,7 +18,6 @@ const postCalculationInput = (event) => {
       "Content-Type": "application/json",
     },
   }).then(() => {
-    document.querySelector("#calc-form").reset();
     getCalculationResult().then(updatePage);
   });
 };
@@ -31,6 +30,11 @@ const getCalculationResult = async () => {
   return fetch("/calculation").then((res) => res.json());
 };
 
+/** Update the DOM with current calculation results
+ * 
+ * @param {Object} calcResult - An object with two keys: `answer` gives the
+ *  answer as a string; `history` gives the history as an array of objects, each 
+ */
 const updatePage = (calcResult) => {
   console.log("calcResult", calcResult);
   const answerElement = document.querySelector("#answer-value");
