@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
-</head>
-<body>
-  <h1>Server Calculator</h1>
-  <!-- Design:
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+  </head>
+  <body>
+    <h1>Server Calculator</h1>
+    <!-- Design:
     Layout:
        _____
       |input|  =
@@ -26,10 +26,13 @@
     - Use buttons to fill input or type on keyboard
     - Automatically replace -, *, / with −, ×, ÷
    -->
-  <form id="calc-form" onsubmit="submitCalcForm(event)">
-    <input type="text" id="calc-input-line" placeholder="1+1" required />
-    <button type="submit">=</button>
-  </form>
-  <script src="scripts/client.js"></script>
-</body>
+    <form id="calc-form" onsubmit="postCalculation(event)">
+      <input type="text" id="calc-input-line" placeholder="1+1" required />
+      <button type="submit">=</button>
+    </form>
+    <div id="answer-div">
+      Answer: <span id="answer-value"></span>
+    </div>
+    <script src="scripts/client.js"></script>
+  </body>
 </html>

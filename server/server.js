@@ -8,16 +8,20 @@ const operationFunction = {
   "×": (num1, num2) => num1 * num2,
   "÷": (num1, num2) => num1 / num2,
 };
-let calcHistory = [];
+let history = [];
 let answer;
 
 // functions
-/** Evaluates certain operations in a calculation array.
+/** Evaluate a subset of operations in a calculation array.
+ *
+ * Example:
+ * evaluateOperations(['1', '+', '1', '/', '2', '+', '3'], ['+'])
+ * => ['2', '/', '5']
  *
  * @param {array} calcArray - An array of strings alternately encoding numbers
- * and arithmetic operations.
+ *  and arithmetic operations. Example: ['-1.0', '×', '3.5', '+', '2'].
  * @param {*} operations - The arithmetic operations to evaluate.
- * @returns The a new calculation array, after evaluating the requested operations.
+ * @returns A new calculation array, with the operations yet to be evaluated
  */
 const evaluateOperations = (calcArray, operations) => {
   const isRequestedOp = (item) => operations.includes(item);
@@ -37,7 +41,7 @@ const evaluateOperations = (calcArray, operations) => {
   return calcArray;
 };
 
-/** Evaluate a calculation encoded in an array of strings.
+/** Calculate the final answer of a calculation array.
  *
  * @param {array} calcArray - An array of strings alternately encoding numbers
  * and arithmetic operations.
@@ -68,12 +72,10 @@ app.listen(PORT, () => {
 
 app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
-  answer = calculateAnswer(req.body);
-  console.log("Calculated answer:", answer);
+  answer = String(calculateAnswer(req.body));
   res.sendStatus(201);
 });
 
 app.get("/calculation", (req, res) => {
-  console.log("Attempting to send answer:", answer);
-  res.send(String(answer));
+  res.send({ answer: answer, history: history });
 });
