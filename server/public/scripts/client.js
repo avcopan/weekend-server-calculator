@@ -29,8 +29,7 @@ const submitCalcForm = (event) => {
   /* step 1: parse the input line, getting the pair of numbers and the operator */
   let parseIndex = 0;
   const inputLine = document.querySelector("#calc-input-line").value;
-  let numbers = [];
-  let operations = [];
+  let calculation = [];
   do {
     if (parseIndex > 0) {
       // If past first number, parse the operation before parsing another
@@ -40,7 +39,7 @@ const submitCalcForm = (event) => {
       // Increment the parse index
       parseIndex += operation.length; // currently always 1
       // Add to operations list, standardizing the operation symbol
-      operations.push(operationSymbol[operation]);
+      calculation.push(operationSymbol[operation]);
     }
     // Parse the next number
     const number = parseNext(numberRegExp, inputLine, parseIndex);
@@ -49,7 +48,7 @@ const submitCalcForm = (event) => {
     // Increment the parse index
     parseIndex += number.length;
     // Add to numbers list
-    numbers.push(number);
+    calculation.push(number);
   } while (parseIndex < inputLine.length);
 
   // If we didn't reach the end of the string, raise an alert
@@ -57,8 +56,7 @@ const submitCalcForm = (event) => {
     alert(`Failed to interpret input after the ${parseIndex}th character`);
   // Otherwise, proceed as normal...
   } else {
-    console.log("Numbers:", numbers);
-    console.log("Operations:", operations);
+    console.log("Calculation:", calculation);
     /* step 2: send this information to the server with a POST request */
   }
 };
