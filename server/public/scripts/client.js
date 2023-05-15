@@ -37,8 +37,18 @@ const getCalculationResult = async () => {
  */
 const updatePage = (calcResult) => {
   console.log("calcResult", calcResult);
-  const answerElement = document.querySelector("#answer-value");
-  answerElement.innerHTML = calcResult.answer;
+  // First, update the answer value
+  const answerValueElement = document.querySelector("#answer-value");
+  answerValueElement.innerHTML = calcResult.answer;
+  // Then, update the history div
+  const historyDiv = document.querySelector("#history-div");
+  historyDiv.innerHTML = '';
+  for (let entry of calcResult.history) {
+    historyDiv.innerHTML = 
+      `<span class="history-input">${entry.input}</span>=` +
+      `<span class="history-answer">${entry.answer}</span><br />` +
+      historyDiv.innerHTML;
+  }
 };
 
 getCalculationResult().then(updatePage);
