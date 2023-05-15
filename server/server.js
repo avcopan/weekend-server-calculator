@@ -153,9 +153,10 @@ app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
   const calcArray = parseCalculationInput(inputLine);
+  const cleanInputLine = calcArray.join(' ');
   answer = calculateAnswer(calcArray);
   history.push({
-    input: inputLine,
+    input: cleanInputLine,
     answer: answer,
   });
   res.sendStatus(201);

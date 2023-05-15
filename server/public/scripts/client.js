@@ -45,8 +45,8 @@ const updatePage = (calcResult) => {
   historyDiv.innerHTML = '';
   for (let entry of calcResult.history) {
     historyDiv.innerHTML = 
-      `<span class="history-input">${entry.input}</span>=` +
-      `<span class="history-answer">${entry.answer}</span><br />` +
+      `<span class="history-input">${entry.input} </span>=` +
+      `<span class="history-answer"> ${entry.answer}</span><br />` +
       historyDiv.innerHTML;
   }
 };
