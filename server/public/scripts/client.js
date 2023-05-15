@@ -29,6 +29,9 @@ const submitCalcForm = (event) => {
   /* step 1: parse the input line, getting the pair of numbers and the operator */
   let parseIndex = 0;
   const inputLine = document.querySelector("#calc-input-line").value;
+  // Calculation will be stored as a list of alternating numbers and operations
+  // Down the road, this could allow us to implement different orders of
+  // operations using parentheses.
   let calculation = [];
   do {
     if (parseIndex > 0) {
@@ -51,12 +54,20 @@ const submitCalcForm = (event) => {
     calculation.push(number);
   } while (parseIndex < inputLine.length);
 
-  // If we didn't reach the end of the string, raise an alert
+  // If we didn't reach the end of the string, raise an alert and quit the function
   if (parseIndex < inputLine.length) {
     alert(`Failed to interpret input after the ${parseIndex}th character`);
-  // Otherwise, proceed as normal...
-  } else {
-    console.log("Calculation:", calculation);
-    /* step 2: send this information to the server with a POST request */
+    return;
   }
+
+  // Send the calculation information to the server
+  fetch('/calculation', {
+    method: "POST",
+    body: JSON.stringify(calculation),
+    headers: {
+      "Content-Type": "application/json",
+    }
+  }).then(() => {
+    document.querySelector("#calc-form").reset();
+  })
 };
