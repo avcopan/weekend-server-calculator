@@ -26,9 +26,10 @@
     - Use buttons to fill input or type on keyboard
     - Automatically replace -, *, / with −, ×, ÷
    -->
-  <form>
+  <form id="calc-form" onsubmit="submitCalcForm(event)">
     <input type="text" id="calc-input-line" placeholder="1+1" required />
     <button type="submit">=</button>
   </form>
+  <script src="scripts/client.js"></script>
 </body>
 </html>
