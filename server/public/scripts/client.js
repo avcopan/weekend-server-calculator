@@ -73,7 +73,7 @@ const updatePage = (calcResult) => {
   console.log("calcResult", calcResult);
   // First, update the answer value
   const answerValueElement = document.querySelector("#answer-value");
-  answerValueElement.innerHTML = calcResult.answer;
+  answerValueElement.innerHTML = calcResult.answer.replace('-', '−');
   // Next, report any errors
   if (calcResult.error) {
     alert(calcResult.error);

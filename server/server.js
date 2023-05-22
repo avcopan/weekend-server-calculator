@@ -228,7 +228,7 @@ const evaluateCalcArrays = (calcArrays) => {
 };
 
 /** Clean up the inputLine, for reporting history to the DOM
- * 
+ *
  * @param {string} inputLine - The raw input line
  * @returns The cleaned up input line
  */
@@ -261,7 +261,7 @@ app.post("/calculation", (req, res) => {
   error = errorMsg;
   history.push({
     input: formatInputLineForHistory(inputLine),
-    answer: answer,
+    answer: answer.replace('-', '−'),
   });
   res.sendStatus(201);
 });
