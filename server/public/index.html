@@ -23,6 +23,12 @@
     - Allow user to select `Ans` as a placeholder for the previous answer
     - Use buttons to fill input or type on keyboard
     - Implement parentheses using https://www.npmjs.com/package/paren ?
+    Features:
+    - Replaces *, -, and / with −,  ×, and ÷ during input
+    - Allows arbitrary-length inputs (not just single operations)
+    - When input parsing fails, sends helpful message about where it failed
+    - Allows usage of `Ans` or `Answer` keyword to refer to the current answer
+    in the next calculation
    -->
     <form id="calc-form" onsubmit="postCalculationInput(event)">
       <input type="text" id="calc-input-line" placeholder="1+1" required />
