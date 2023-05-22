@@ -1,0 +1,79 @@
+@font-face {
+    font-family: 'Digital-7 Mono';
+    src: url('fonts/Digital-7MonoItalic.woff2') format('woff2'),
+        url('fonts/Digital-7MonoItalic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+html {
+  font-family: 'Roboto', sans-serif;
+  background-color: #171c28;
+  color: #bdc6c8;
+}
+
+h1, h2 {
+  font-family: 'Shrikhand', cursive;
+  font-weight: lighter;
+  margin: 0 2rem;
+}
+
+#calc-form {
+  margin: 1rem 2rem;
+}
+
+.calc-header {
+  font-family: 'Shrikhand', cursive;
+  font-size: 48px;
+}
+
+.display {
+  display: flex;
+  flex-flow: column nowrap;
+  background-color: #627258;
+  width: 21.8rem;
+  box-shadow: inset 2px 1px 4px 2px black;
+  margin: 0 0 1rem 0;
+}
+
+input,
+input:focus {
+  background-color: transparent;
+  color: black;
+  font-family: "Inconsolata", monospace;
+  font-size: 28px;
+  border: 0;
+  outline: 0;
+  width: 100%;
+  padding: 5px 2px 10px 10px;
+}
+
+#answer-value {
+  text-align: right;
+  color: black;
+  font-family: 'Digital-7 Mono';
+  font-size: 48px;
+  padding: 2px 10px 20px 10px;
+}
+
+input::placeholder {
+  color: #3d4737;
+}
+
+.button-panel {
+  display: grid;
+  grid-template-columns: 5rem 5rem 5rem 5rem;
+  grid-gap: 10px;
+}
+
+.box {
+  border-radius: 10px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+}
+
+.extra-button {
+  background-color: #16171b;
+  color: #d0d3d9;
+}

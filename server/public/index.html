@@ -4,10 +4,19 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- stylesheet -->
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata&family=Roboto&family=Shrikhand&display=swap"
+      rel="stylesheet"
+    />
     <title>Calculator</title>
   </head>
   <body>
-    <h1>Server Calculator</h1>
+    <div class="calc-header">Server Calculator</div>
     <!-- Design:
     Layout:
        _____
@@ -20,24 +29,44 @@
       (  ) Ans
 
     Todo:
-    - Allow user to select `Ans` as a placeholder for the previous answer
     - Use buttons to fill input or type on keyboard
-    - Implement parentheses using https://www.npmjs.com/package/paren ?
+    - Add styling
     Features:
     - Replaces *, -, and / with −,  ×, and ÷ during input
     - Allows arbitrary-length inputs (not just single operations)
     - When input parsing fails, sends helpful message about where it failed
     - Allows usage of `Ans` or `Answer` keyword to refer to the current answer
     in the next calculation
+    - Allows use to parentheses to control the order of operations
    -->
     <form id="calc-form" onsubmit="postCalculationInput(event)">
-      <input type="text" id="calc-input-line" placeholder="1+1" required />
-      <button type="submit">=</button>
-      <button type="reset">C</button>
+      <div class="display">
+        <input type="text" id="calc-input-line" placeholder="1+1" required />
+        <div id="answer-value"></div>
+      </div>
+      <div class="button-panel">
+        <button class="box extra-button">(</button>
+        <button class="box extra-button">)</button>
+        <button class="box extra-button">Ans</button>
+        <button class="box extra-button" type="reset">Clear</button>
+        <button class="box number-button">7</button>
+        <button class="box number-button">8</button>
+        <button class="box number-button">9</button>
+        <button class="box operator-button">÷</button>
+        <button class="box number-button">4</button>
+        <button class="box number-button">5</button>
+        <button class="box number-button">6</button>
+        <button class="box operator-button">×</button>
+        <button class="box number-button">1</button>
+        <button class="box number-button">2</button>
+        <button class="box number-button">3</button>
+        <button class="box operator-button">−</button>
+        <button class="box number-button">0</button>
+        <button class="box number-button">.</button>
+        <button class="box operator-button" type="submit">=</button>
+        <button class="box operator-button">+</button>
+      </div>
     </form>
-    <div id="answer-div">
-      Answer: <span id="answer-value"></span>
-    </div>
     <h2>History</h2>
     <div id="history-div">
       <!-- History will go here -->
