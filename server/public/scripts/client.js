@@ -8,11 +8,11 @@ const properSymbol = {
 
 /* functions */
 /** An event listener to replace  -, *, and / with −, ×, and ÷
- * 
+ *
  * Checks whether the pressed character matches one of these.  If so, prevents
  * the default behavior for the event and inserts the proper symbol in stead.
- * 
- * @param {*} event 
+ *
+ * @param {*} event
  */
 const useProperMathSymbols = (event) => {
   const pressedChar = event.key;
@@ -21,7 +21,15 @@ const useProperMathSymbols = (event) => {
     : pressedChar;
   if (pressedChar !== properChar) {
     event.preventDefault();
-    event.target.value = event.target.value + properChar;
+    // Get the current selection position
+    currentPos = event.target.selectionStart;
+    currentVal = event.target.value;
+    event.target.value =
+      currentVal.slice(0, currentPos) +
+      properChar +
+      currentVal.slice(currentPos);
+    // Reset the new selection position
+    event.target.setSelectionRange(currentPos + 1, currentPos + 1);
   }
 };
 
@@ -34,6 +42,7 @@ const postCalculationInput = (event) => {
 
   // Get and parse the input line
   const inputLine = document.querySelector("#calc-input-line").value;
+  console.log("Received input line:", inputLine);
 
   // Post the calculation information to the server
   fetch("/calculation", {

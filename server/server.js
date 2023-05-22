@@ -13,7 +13,7 @@ const operationFunction = {
   "÷": (num1, num2) => num1 / num2,
 };
 let history = [];
-let answer = 0;
+let answer = "0";
 let error = "";
 
 // functions
@@ -37,8 +37,67 @@ const parseNext = (regex, string, startIndex) => {
   return [match, startIndex];
 };
 
-/** Parse the calculation input line, generating an array of numbers and operators.
- * 
+/** Parse a simple calculation string, consisting of numbers and operators
+ *
+ * @param {String} calcString - A string of the form "1+2+−3+4÷10"
+ * @param {Boolean} opStart - Does this string start with an operator?
+ * @param {Boolean} opEnd - Does this string end with an operator?
+ * @returns An array of alternating numbers and operators
+ */
+const parseCalcString = (calcString, opStart, opEnd) => {
+  // Calculation will be stored as a list of alternating numbers and operations
+  // Down the road, this could allow us to implement different orders of
+  // operations using parentheses.
+  let parseIndex = 0;
+  let calcArray = [];
+  let match, lastMatch;
+  do {
+    // If we are are past the beginning, or the string starts with an operator,
+    // check for an operator
+    if (opStart || parseIndex > 0) {
+      [match, parseIndex] = parseNext(operationRegExp, calcString, parseIndex);
+      // If no operator was found, assume multiplication
+      match = match ? match : "×";
+      calcArray.push(match);
+      lastMatch = match;
+    }
+    // Check whether the next segment matches the Ans/Answer keyword
+    [match, parseIndex] = parseNext(answerKeyRegExp, calcString, parseIndex);
+    if (match) {
+      match = answer;
+    } else {
+      // If no Ans/Answer keyword was found, check for a number
+      [match, parseIndex] = parseNext(numberRegExp, calcString, parseIndex);
+    }
+    // Break if nothing was found
+    if (match) {
+      match = match.replace("−", "-");
+    } else {
+      break;
+    }
+    // Add to numbers list
+    calcArray.push(match);
+    lastMatch = match;
+  } while (parseIndex < calcString.length);
+
+  // Check for an ending operator, if requested, but not if the last match was
+  // an operator (happens when the string *only* contained an operator)
+  if (opEnd && !["+", "−", "×", "÷"].includes(lastMatch)) {
+    [operation, parseIndex] = parseNext(
+      operationRegExp,
+      calcString,
+      parseIndex
+    );
+    // If no operator was found, assume multiplication
+    calcArray.push(operation ? operation : "×");
+  }
+
+  return calcArray;
+};
+
+/** Parse the calculation input line, generating a (potentially nested) array of
+ *  numbers and operators.
+ *
  * Example logic:
  *  let inputLine = "1+2+(5-(2*3))/(5+7)";
  *  let calcStrings = parseParens(inputLine);
@@ -46,10 +105,9 @@ const parseNext = (regex, string, startIndex) => {
  *  let calcArray = parseCalcStringsRecursively(calcStrings);
  *   => ['1', '+', '2', '+', ['5', '-', ['2', '*', '3']], '/', ['5', '+', '7']]
  *
- * @param {string} inputLine - A string representing the raw input.
- *  Example: '-1.0 × 3.5 + 2'].
- * @returns {array} An array of strings alternately encoding numbers and
- *  arithmetic operations. Example: ['-1.0', '×', '3.5', '+', '2'].
+ * @param {string} inputLine - A string representing the raw input (example above).
+ * @returns {array} A (potentially nested) array of strings alternately encoding
+ *  numbers and arithmetic operations.
  */
 const parseInputLine = (inputLine) => {
   // First, to simplify parsing, remove all whitespace from inputLine
@@ -66,125 +124,29 @@ const parseInputLine = (inputLine) => {
     let opEnd = false;
     let calcArrays = [];
     for (let [index, calcString] of calcStrings.entries()) {
+      // If this is an array, call the function recursively
       if (Array.isArray(calcString)) {
         let calcArray = parseCalcStringsRecursively(calcString);
         /* ^^^ recursive call here ^^^ */
         calcArrays.push(calcArray);
+      // Otherwise, split the string into a calcArray
       } else {
         // After the first entry, each string should start with an operator
         opStart = index > 0;
         // Up to the last entry, each string should end with an operator
         opEnd = index < calcStrings.length - 1;
-        let calcArray = parseCalcStringNew(calcString, opStart, opEnd);
+        let calcArray = parseCalcString(calcString, opStart, opEnd);
         calcArrays.push(...calcArray);
       }
     }
     return calcArrays;
-  }
+  };
 
   // Use paren module to parse parentheses
   let calcStrings = parseParens(inputLine);
   // Recursively calculate the resulting nested array
   let calcArrays = parseCalcStringsRecursively(calcStrings, 0);
-  console.log("calcArrays", calcArrays);
-  console.log("calcArrays stringified", JSON.stringify(calcArrays));
-  console.log("END praseCalcStrings FUNCTION HERE");
-}
-const parseCalcStringNew = (calcString, opStart, opEnd) => {
-  // Calculation will be stored as a list of alternating numbers and operations
-  // Down the road, this could allow us to implement different orders of
-  // operations using parentheses.
-  console.log(`parsing string '${calcString}'`);
-  let parseIndex = 0;
-  let calcArray = [];
-  let match, lastMatch;
-  do {
-    // If we are are past the beginning, or the string starts with an operator,
-    // check for an operator
-    if (opStart || parseIndex > 0) {
-      [match, parseIndex] = parseNext(
-        operationRegExp,
-        calcString,
-        parseIndex
-      );
-      // If no operator was found, assume multiplication
-      match = match ? match: "×";
-      calcArray.push(match); lastMatch = match;
-    }
-    // Check whether the next segment matches the Ans/Answer keyword
-    [match, parseIndex] = parseNext(answerKeyRegExp, calcString, parseIndex);
-    if (!match) {
-      // If no Ans/Answer keyword was found, check for a number
-      [match, parseIndex] = parseNext(numberRegExp, calcString, parseIndex);
-    }
-    // Break if nothing was found
-    if (!match) {
-      break;
-    }
-    // Add to numbers list
-    calcArray.push(match); lastMatch = match;
-  } while (parseIndex < calcString.length);
-
-  // Check for an ending operator, if requested, but not if the last match was
-  // an operator (happens when the string *only* contained an operator)
-  console.log("last match:", lastMatch)
-  if (opEnd && !["+", "−", "×", "÷"].includes(lastMatch)) {
-    [operation, parseIndex] = parseNext(
-      operationRegExp,
-      calcString,
-      parseIndex
-    );
-    // If no operator was found, assume multiplication
-    calcArray.push(operation ? operation: "×");
-  }
-
-  return calcArray;
-};
-const parseCalcString = (calcString) => {
-  // First, remove all whitespaces
-  calcString = calcString.replace(/\s+/g, "");
-  // Calculation will be stored as a list of alternating numbers and operations
-  // Down the road, this could allow us to implement different orders of
-  // operations using parentheses.
-  let parseIndex = 0;
-  let calcArray = [];
-  let operation, answerKey, number;
-  let errorMsg = "";
-  do {
-    if (parseIndex > 0) {
-      // If past first number, parse the operation before parsing another
-      [operation, parseIndex] = parseNext(
-        operationRegExp,
-        calcString,
-        parseIndex
-      );
-      // Break if nothing was found
-      if (!operation) {
-        break;
-      }
-      // Add to operations list, standardizing the operation symbol
-      calcArray.push(operation);
-    }
-    [answerKey, parseIndex] = parseNext(answerKeyRegExp, calcString, parseIndex);
-    if (answerKey) {
-      number = answer;
-    } else {
-      [number, parseIndex] = parseNext(numberRegExp, calcString, parseIndex);
-    }
-    // Break if nothing was found
-    if (!number) {
-      break;
-    }
-    // Add to numbers list
-    calcArray.push(number);
-  } while (parseIndex < calcString.length);
-
-  // If we didn't reach the end of the string, raise an alert and quit the function
-  if (parseIndex < calcString.length) {
-    errorMsg = `Failed to interpret input after the ${parseIndex}th character`;
-  }
-
-  return [calcArray, errorMsg];
+  return calcArrays;
 };
 
 /** Evaluate a subset of operations in a calculation array.
@@ -218,23 +180,33 @@ const evaluateOperations = (calcArray, operations) => {
 
 /** Calculate the final answer of a calculation array.
  *
- * @param {array} calcArray - An array of strings alternately encoding numbers
+ * @param {array} calcArrays - An array of strings alternately encoding numbers
  * and arithmetic operations.
  * @returns {number} The final result of the calculation.
  */
-const evaluateCalcArray = (calcArray) => {
+const evaluateCalcArrays = (calcArrays) => {
+
+  while (calcArrays.some(Array.isArray)) {
+    // If there is an array in `calcArrays`, evaluate it recursively
+    const arrIndex = calcArrays.findIndex(Array.isArray);
+    result = evaluateCalcArrays(calcArrays[arrIndex]);
+    /* ^^^ recursive call here ^^^ */
+    calcArrays.splice(arrIndex, 1, result);
+  }
+  // If there are no arrays in `calcArrays`, evaluate it directly
   // Evaluate multiplication and division
-  calcArray = evaluateOperations(calcArray, ["×", "÷"]);
+  calcArrays = evaluateOperations(calcArrays, ["×", "÷"]);
   // Evaluate addition and subtraction
-  calcArray = evaluateOperations(calcArray, ["+", "−"]);
+  calcArrays = evaluateOperations(calcArrays, ["+", "−"]);
+
   // We should now only have one element remaining
   console.assert(
-    calcArray.length == 1,
+    calcArrays.length == 1,
     "After evaluating all operations, calcArray should consist of a",
     "single element, but it doesn't",
-    calcArray
+    calcArrays
   );
-  return calcArray[0];
+  return calcArrays[0];
 };
 
 // server
@@ -248,20 +220,18 @@ app.listen(PORT, () => {
 app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
-  parseInputLine(inputLine);
-  const [calcArray, errorMsg] = parseCalcString(inputLine);
-  const cleanInputLine = calcArray.join(" ");
-  answer = evaluateCalcArray(calcArray);
+  const calcArrays = parseInputLine(inputLine);
+  console.log("calcArrays:", calcArrays);
+  answer = String(evaluateCalcArrays(calcArrays));
   console.log("Calculated answer:", answer);
-  console.log("Error message:", errorMsg);
-  error = errorMsg;
+  error = "";
   history.push({
-    input: cleanInputLine,
+    input: inputLine,
     answer: answer,
   });
   res.sendStatus(201);
 });
 
 app.get("/calculation", (req, res) => {
-  res.send({ answer: String(answer), history: history, error: error });
+  res.send({ answer, history, error });
 });
