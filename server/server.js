@@ -44,7 +44,7 @@ const parseNext = (regex, string, startIndex) => {
  * @param {Boolean} opEnd - Does this string end with an operator?
  * @returns An array of alternating numbers and operators
  */
-const parseCalcString = (calcString, opStart, opEnd) => {
+const parseCalcString = (calcString, opStart, opEnd, badStrings) => {
   // Calculation will be stored as a list of alternating numbers and operations
   // Down the road, this could allow us to implement different orders of
   // operations using parentheses.
@@ -92,7 +92,8 @@ const parseCalcString = (calcString, opStart, opEnd) => {
     calcArray.push(operation ? operation : "×");
   }
 
-  return calcArray;
+  // If we failed to parse the string, return null
+  return parseIndex < calcString.length ? null : calcArray;
 };
 
 /** Parse the calculation input line, generating a (potentially nested) array of
@@ -116,6 +117,9 @@ const parseInputLine = (inputLine) => {
   // follows another
   inputLine = inputLine.replace(/\)\(/g, ")×(");
 
+  // This array will store strings where parsing failed
+  let badStrings = [];
+
   const parseCalcStringsRecursively = (calcStrings) => {
     // Booleans used to flag whether a segment should start and/or end with an
     // operator. It should start with an operator if it follows another segment.
@@ -129,14 +133,18 @@ const parseInputLine = (inputLine) => {
         let calcArray = parseCalcStringsRecursively(calcString);
         /* ^^^ recursive call here ^^^ */
         calcArrays.push(calcArray);
-      // Otherwise, split the string into a calcArray
+        // Otherwise, split the string into a calcArray
       } else {
         // After the first entry, each string should start with an operator
         opStart = index > 0;
         // Up to the last entry, each string should end with an operator
         opEnd = index < calcStrings.length - 1;
-        let calcArray = parseCalcString(calcString, opStart, opEnd);
-        calcArrays.push(...calcArray);
+        let calcArray = parseCalcString(calcString, opStart, opEnd, badStrings);
+        if (!calcArray) {
+          badStrings.push(calcString);
+        } else {
+          calcArrays.push(...calcArray);
+        }
       }
     }
     return calcArrays;
@@ -145,8 +153,16 @@ const parseInputLine = (inputLine) => {
   // Use paren module to parse parentheses
   let calcStrings = parseParens(inputLine);
   // Recursively calculate the resulting nested array
-  let calcArrays = parseCalcStringsRecursively(calcStrings, 0);
-  return calcArrays;
+  let calcArrays = parseCalcStringsRecursively(calcStrings);
+
+  // If there were bad strings, make an error message
+  let errorMsg = "";
+  if (badStrings.length > 0) {
+    errorMsg = "Failed to parse the following: ";
+    errorMsg += badStrings.map((s) => `'${s}'`).join(", ");
+  }
+
+  return [calcArrays, errorMsg];
 };
 
 /** Evaluate a subset of operations in a calculation array.
@@ -170,10 +186,8 @@ const evaluateOperations = (calcArray, operations) => {
     let num2 = Number(calcArray[opIndex + 1]);
     // Evaluate to get the result
     let result = operationFunction[op](num1, num2);
-    console.log(`${opIndex}: ${num1} ${op} ${num2} = ${result}`);
     // Update the calculation, replacing this operation with the result
     calcArray.splice(opIndex - 1, 3, result);
-    console.log("Spliced calcArray:", calcArray);
   }
   return calcArray;
 };
@@ -185,7 +199,6 @@ const evaluateOperations = (calcArray, operations) => {
  * @returns {number} The final result of the calculation.
  */
 const evaluateCalcArrays = (calcArrays) => {
-
   while (calcArrays.some(Array.isArray)) {
     // If there is an array in `calcArrays`, evaluate it recursively
     const arrIndex = calcArrays.findIndex(Array.isArray);
@@ -218,9 +231,9 @@ const formatInputLineForHistory = (inputLine) => {
   // Then, add whitespace back in, but only around operators
   inputLine = inputLine.replace(/([+−×÷])/g, " $1 ");
   // Consistently format answer keywords
-  inputLine = inputLine.replace(/Ans(?:wer)/gi, 'Ans');
+  inputLine = inputLine.replace(/Ans(?:wer)/gi, "Ans");
   return inputLine;
-}
+};
 
 // server
 app.use(express.static("server/public"));
@@ -233,11 +246,9 @@ app.listen(PORT, () => {
 app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
-  const calcArrays = parseInputLine(inputLine);
-  console.log("calcArrays:", calcArrays);
+  const [calcArrays, errorMsg] = parseInputLine(inputLine);
   answer = String(evaluateCalcArrays(calcArrays));
-  console.log("Calculated answer:", answer);
-  error = "";
+  error = errorMsg;
   history.push({
     input: formatInputLineForHistory(inputLine),
     answer: answer,
