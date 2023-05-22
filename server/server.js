@@ -4,15 +4,6 @@ const app = express();
 const PORT = 8000;
 const numberRegExp = RegExp(/^[+−\-]?\d+(\.\d+)?/);
 const operationRegExp = RegExp(/^[+−×÷\-\*\/]?/);
-const operationSymbol = {
-  "+": "+",
-  "−": "−",
-  "×": "×",
-  "÷": "÷",
-  "-": "−",
-  "*": "×",
-  "/": "÷",
-};
 const operationFunction = {
   "+": (num1, num2) => num1 + num2,
   "−": (num1, num2) => num1 - num2,
@@ -67,7 +58,7 @@ const parseCalculationInput = (inputLine) => {
       // Increment the parse index
       parseIndex += operation.length; // currently always 1
       // Add to operations list, standardizing the operation symbol
-      calcArray.push(operationSymbol[operation]);
+      calcArray.push(operation);
     }
     // Parse the next number
     const number = parseNext(numberRegExp, inputLine, parseIndex);
@@ -114,7 +105,7 @@ const evaluateOperations = (calcArray, operations) => {
     console.log(`${opIndex}: ${num1} ${op} ${num2} = ${result}`);
     // Update the calculation, replacing this operation with the result
     calcArray.splice(opIndex - 1, 3, result);
-    console.log("Sliced calcArray:", calcArray);
+    console.log("Spliced calcArray:", calcArray);
   }
   return calcArray;
 };
@@ -149,7 +140,6 @@ app.listen(PORT, () => {
 });
 
 app.post("/calculation", (req, res) => {
-  console.log("HEREHEREHER");
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
   const calcArray = parseCalculationInput(inputLine);
