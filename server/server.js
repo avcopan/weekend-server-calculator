@@ -209,6 +209,19 @@ const evaluateCalcArrays = (calcArrays) => {
   return calcArrays[0];
 };
 
+const formatInputLineForHistory = (inputLine) => {
+  // First, remove whitespaces
+  inputLine = inputLine.replace(/\s+/g, "");
+  // Insert multiplication symbols when one set of parentheses immediately
+  // follows another
+  inputLine = inputLine.replace(/\)\(/g, ")×(");
+  // Then, add whitespace back in, but only around operators
+  inputLine = inputLine.replace(/([+−×÷])/g, " $1 ");
+  // Consistently format answer keywords
+  inputLine = inputLine.replace(/Ans(?:wer)/gi, 'Ans');
+  return inputLine;
+}
+
 // server
 app.use(express.static("server/public"));
 app.use(express.json());
@@ -226,7 +239,7 @@ app.post("/calculation", (req, res) => {
   console.log("Calculated answer:", answer);
   error = "";
   history.push({
-    input: inputLine,
+    input: formatInputLineForHistory(inputLine),
     answer: answer,
   });
   res.sendStatus(201);
