@@ -2,6 +2,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8000;
+const answerKeyRegExp = RegExp(/Ans(?:wer)/i);
 const numberRegExp = RegExp(/^[+−\-]?\d+(\.\d+)?/);
 const operationRegExp = RegExp(/^[+−×÷\-\*\/]?/);
 const operationFunction = {
@@ -12,6 +13,7 @@ const operationFunction = {
 };
 let history = [];
 let answer = 0;
+let error = '';
 
 // functions
 /** Parse the next match in a string, string from a certain index
@@ -26,10 +28,12 @@ const parseNext = (regex, string, startIndex) => {
   const execReturn = regex.exec(string.slice(startIndex));
   // if nothing was found, execReturn is null, which is falsey
   if (!execReturn) {
-    return null;
+    return [null, startIndex];
   }
   // otherwise, extract the match and update the startIndex
-  return execReturn[0];
+  match = execReturn[0]
+  startIndex += match.length;
+  return [match, startIndex];
 };
 
 /** Parse the calculation input line, generating an array of numbers and operators.
@@ -47,38 +51,39 @@ const parseCalculationInput = (inputLine) => {
   // operations using parentheses.
   let parseIndex = 0;
   let calcArray = [];
+  let operation, answerKey, number;
+  let errorMsg = '';
   do {
     if (parseIndex > 0) {
       // If past first number, parse the operation before parsing another
-      const operation = parseNext(operationRegExp, inputLine, parseIndex);
+      [operation, parseIndex] = parseNext(operationRegExp, inputLine, parseIndex);
       // Break if nothing was found
       if (!operation) {
         break;
       }
-      // Increment the parse index
-      parseIndex += operation.length; // currently always 1
       // Add to operations list, standardizing the operation symbol
       calcArray.push(operation);
     }
-    // Parse the next number
-    const number = parseNext(numberRegExp, inputLine, parseIndex);
+    [answerKey, parseIndex] = parseNext(answerKeyRegExp, inputLine, parseIndex);
+    if (answerKey) {
+      number = answer;
+    } else {
+      [number, parseIndex] = parseNext(numberRegExp, inputLine, parseIndex);
+    }
     // Break if nothing was found
     if (!number) {
       break;
     }
-    // Increment the parse index
-    parseIndex += number.length;
     // Add to numbers list
     calcArray.push(number);
   } while (parseIndex < inputLine.length);
 
   // If we didn't reach the end of the string, raise an alert and quit the function
   if (parseIndex < inputLine.length) {
-    alert(`Failed to interpret input after the ${parseIndex}th character`);
-    return null;
+    errorMsg = `Failed to interpret input after the ${parseIndex}th character`;
   }
 
-  return calcArray;
+  return [calcArray, errorMsg];
 };
 
 /** Evaluate a subset of operations in a calculation array.
@@ -142,9 +147,10 @@ app.listen(PORT, () => {
 app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
-  const calcArray = parseCalculationInput(inputLine);
+  const [calcArray, errorMsg] = parseCalculationInput(inputLine);
   const cleanInputLine = calcArray.join(' ');
   answer = calculateAnswer(calcArray);
+  error = errorMsg;
   history.push({
     input: cleanInputLine,
     answer: answer,
@@ -153,5 +159,5 @@ app.post("/calculation", (req, res) => {
 });
 
 app.get("/calculation", (req, res) => {
-  res.send({ answer: String(answer), history: history });
+  res.send({ answer: String(answer), history: history, error: error });
 });

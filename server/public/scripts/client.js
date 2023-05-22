@@ -65,6 +65,10 @@ const updatePage = (calcResult) => {
   // First, update the answer value
   const answerValueElement = document.querySelector("#answer-value");
   answerValueElement.innerHTML = calcResult.answer;
+  // Next, report any errors
+  if (calcResult.error) {
+    alert(calcResult.error);
+  }
   // Then, update the history div
   const historyDiv = document.querySelector("#history-div");
   historyDiv.innerHTML = "";
