@@ -5,6 +5,7 @@ const properSymbol = {
   "*": "×",
   "/": "÷",
 };
+const historyIndex = -1;
 
 /* functions */
 /** An event listener to replace  -, *, and / with −, ×, and ÷
