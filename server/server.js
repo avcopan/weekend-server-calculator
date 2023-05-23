@@ -160,7 +160,7 @@ const parseInputLine = (inputLine) => {
   // the client
   let errorMsg = "";
   if (badStrings.length > 0) {
-    errorMsg = "Failed to parse the following: ";
+    errorMsg = "Failed to parse this part: ";
     errorMsg += badStrings.map((s) => `'${s}'`).join(", ");
   }
 
@@ -224,7 +224,8 @@ const evaluateCalcArrays = (calcArrays) => {
     "single element, but it doesn't",
     calcArrays
   );
-  return calcArrays[0];
+  const evalWorked = calcArrays.length == 1;
+  return evalWorked ? Number(calcArrays[0]) : NaN;
 };
 
 /** Clean up the inputLine, for reporting history to the DOM
@@ -245,6 +246,15 @@ const formatInputLineForHistory = (inputLine) => {
   return inputLine;
 };
 
+const formatAnswerNumber = (number, returnNaN) => {
+  if (number && !returnNaN) {
+    number = Number(number.toFixed(11));
+  } else {
+    number = NaN;
+  }
+  return String(number);
+}
+
 // server
 app.use(express.static("server/public"));
 app.use(express.json());
@@ -257,7 +267,7 @@ app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
   const [calcArrays, errorMsg] = parseInputLine(inputLine);
-  answer = String(Number(evaluateCalcArrays(calcArrays).toFixed(11)));
+  answer = formatAnswerNumber(evaluateCalcArrays(calcArrays), errorMsg);
   error = errorMsg;
   history.push({
     input: formatInputLineForHistory(inputLine),
