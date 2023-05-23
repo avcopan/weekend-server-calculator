@@ -14,7 +14,7 @@ Features implemented:
  * Allows `Ans` or `Answer` keyword to refer to the value of the previous answer
  * Allows arbitrarily-nested parentheses to control the order of operations
  * Allows either keyboard or button input
- * Imitates the font and color scheme of a classic TI-30XIIS calculator
+ * Imitates the font and color scheme of a [TI-30XIIS calculator](https://education.ti.com/en/products/calculators/scientific-calculators/ti-30x-iis)
  * Allows history scrolling for input using up/down arrows
 
 ## Screen Shot
