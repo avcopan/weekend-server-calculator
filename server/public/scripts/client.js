@@ -5,7 +5,7 @@ const properSymbol = {
   "*": "×",
   "/": "÷",
 };
-const historyIndex = -1;
+let historyIndex = -1;
 
 /* functions */
 /** An event listener to replace  -, *, and / with −, ×, and ÷
@@ -88,6 +88,8 @@ const updatePage = (calcResult) => {
       `<span class="history-answer"> ${entry.answer}</span><br />` +
       historyDiv.innerHTML;
   }
+  historyIndex = calcResult.history.length - 1;
+  console.log('History index reset:', historyIndex);
 };
 
 const calcButtonPress = (event) => {
@@ -95,6 +97,32 @@ const calcButtonPress = (event) => {
   let calcInputLine = document.querySelector('#calc-input-line');
   calcInputLine.value += event.target.innerHTML;
   console.log(event.target.innerHTML);
+}
+
+const scrollHistory = (calcResult) => {
+  let calcInputLine = document.querySelector('#calc-input-line');
+  if (historyIndex in calcResult.history) {
+    const historyLine = calcResult.history[historyIndex].input;
+    calcInputLine.value = historyLine.replace(/\s+/g, '');
+  } else if (historyIndex >= calcResult.history.length) {
+    historyIndex = calcResult.history.length - 1;
+  }
+}
+
+const historyArrowUp = (event) => {
+  event.preventDefault();
+  if (historyIndex > 0) {
+    historyIndex -= 1;
+  }
+  getCalculationResult().then(scrollHistory);
+  console.log('History index decreased:', historyIndex);
+}
+
+const historyArrowDown = (event) => {
+  event.preventDefault();
+  historyIndex += 1;
+  getCalculationResult().then(scrollHistory);
+  console.log('History index increased:', historyIndex);
 }
 
 /* main */

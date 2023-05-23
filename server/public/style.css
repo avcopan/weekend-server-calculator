@@ -74,8 +74,15 @@ input::placeholder {
   padding-left: 1rem;
 }
 
+.arrow-button {
+  background-color: #484976;
+  border-radius: 20px;
+  width: 2rem;
+  height: 2rem;
+}
+
 .arrow {
-  border: solid #bdc6c8;
+  border: solid #c7d1d9;
   border-width: 0 5px 5px 0;
   display: inline-block;
   padding: 3px;
