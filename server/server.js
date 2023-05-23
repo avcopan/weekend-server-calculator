@@ -257,7 +257,7 @@ app.post("/calculation", (req, res) => {
   console.log("Received:", req.body);
   const inputLine = req.body.inputLine;
   const [calcArrays, errorMsg] = parseInputLine(inputLine);
-  answer = String(evaluateCalcArrays(calcArrays));
+  answer = String(Number(evaluateCalcArrays(calcArrays).toFixed(11)));
   error = errorMsg;
   history.push({
     input: formatInputLineForHistory(inputLine),

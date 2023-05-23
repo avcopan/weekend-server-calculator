@@ -89,6 +89,13 @@ const updatePage = (calcResult) => {
   }
 };
 
+const calcButtonPress = (event) => {
+  event.preventDefault();
+  let calcInputLine = document.querySelector('#calc-input-line');
+  calcInputLine.value += event.target.innerHTML;
+  console.log(event.target.innerHTML);
+}
+
 /* main */
 calcInputLine.addEventListener("keydown", useProperMathSymbols);
 getCalculationResult().then(updatePage);

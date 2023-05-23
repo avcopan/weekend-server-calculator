@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inconsolata&family=Roboto&family=Shrikhand&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inconsolata&family=Roboto+Condensed&family=Shrikhand&display=swap"
       rel="stylesheet"
     />
     <title>Calculator</title>
@@ -44,30 +44,31 @@
         <input type="text" id="calc-input-line" placeholder="1+1" required />
         <div id="answer-value"></div>
       </div>
+      <input type="submit" style="display:none" />
       <div class="button-panel">
-        <button class="box extra-button">(</button>
-        <button class="box extra-button">)</button>
-        <button class="box extra-button">Ans</button>
-        <button class="box extra-button" type="reset">Clear</button>
-        <button class="box number-button">7</button>
-        <button class="box number-button">8</button>
-        <button class="box number-button">9</button>
-        <button class="box operator-button">÷</button>
-        <button class="box number-button">4</button>
-        <button class="box number-button">5</button>
-        <button class="box number-button">6</button>
-        <button class="box operator-button">×</button>
-        <button class="box number-button">1</button>
-        <button class="box number-button">2</button>
-        <button class="box number-button">3</button>
-        <button class="box operator-button">−</button>
-        <button class="box number-button">0</button>
-        <button class="box number-button">.</button>
-        <button class="box operator-button" type="submit">=</button>
-        <button class="box operator-button">+</button>
+        <button onclick="calcButtonPress(event)" class="box extra-button">(</button>
+        <button onclick="calcButtonPress(event)" class="box extra-button">)</button>
+        <button onclick="calcButtonPress(event)" class="box extra-button">Ans</button>
+        <button type="reset" class="box extra-button">Clear</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">7</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">8</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">9</button>
+        <button onclick="calcButtonPress(event)" class="box operator-button">÷</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">4</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">5</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">6</button>
+        <button onclick="calcButtonPress(event)" class="box operator-button">×</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">1</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">2</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">3</button>
+        <button onclick="calcButtonPress(event)" class="box operator-button">−</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">0</button>
+        <button onclick="calcButtonPress(event)" class="box number-button">.</button>
+        <button type="submit" class="box number-button">=</button>
+        <button onclick="calcButtonPress(event)" class="box operator-button">+</button>
       </div>
     </form>
-    <h2>History</h2>
+    <div class="history-header">History</div>
     <div id="history-div">
       <!-- History will go here -->
     </div>
