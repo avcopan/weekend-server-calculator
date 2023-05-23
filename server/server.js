@@ -247,7 +247,7 @@ const formatInputLineForHistory = (inputLine) => {
 };
 
 const formatAnswerNumber = (number, returnNaN) => {
-  if (number && !returnNaN) {
+  if (number.toFixed && !returnNaN) {
     number = Number(number.toFixed(11));
   } else {
     number = NaN;
