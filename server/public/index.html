@@ -17,29 +17,6 @@
   </head>
   <body>
     <div class="calc-header">Server Calculator</div>
-    <!-- Design:
-    Layout:
-       _____
-      |input|  C
-       *****
-      7  8  9  +
-      4  5  6  −
-      1  2  3  ×
-      0  .  =  ÷
-      (  ) Ans
-
-    Todo:
-    - Enable up/down arrows for history scrolling
-    Features:
-    - Replaces *, -, and / with −,  ×, and ÷ during input
-    - Allows arbitrary-length inputs (not just single operations)
-    - When input parsing fails, sends helpful message about where it failed
-    - Allows usage of `Ans` or `Answer` keyword to refer to the current answer
-    in the next calculation
-    - Allows use to parentheses to control the order of operations
-    - Use buttons to fill input or type on keyboard
-    - Add styling
-   -->
     <form id="calc-form" onsubmit="postCalculationInput(event)">
       <div class="display-panel">
         <div class="display">
