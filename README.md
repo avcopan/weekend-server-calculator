@@ -19,9 +19,7 @@ Features implemented:
 
 ## Screen Shot
 
----
 ![calculator interface](images/server-calculator-demo.gif)
----
 
 ## Dependencies
 
